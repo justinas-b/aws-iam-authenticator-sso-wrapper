@@ -1,5 +1,6 @@
 package main
 
+// SSORoleMapping struct defines a roleMapping used in aws-auth configMap
 type SSORoleMapping struct {
 	// RoleARN is the AWS Resource Name of the role. (e.g., "arn:aws:iam::000000000000:role/Foo").
 	RoleARN string `json:"rolearn,omitempty" yaml:"rolearn,omitempty"`
@@ -15,6 +16,6 @@ type SSORoleMapping struct {
 	// as (e.g., `system:masters`). Each group name can include placeholders.
 	Groups []string `json:"groups" yaml:"groups"`
 
-	// UserId is the AWS PrincipalId of the role. (e.g., "ABCXSOTJDDV").
-	UserId string `json:"userid,omitempty" yaml:"userid,omitempty"`
+	// UserID is the AWS PrincipalId of the role. (e.g., "ABCXSOTJDDV").
+	UserID string `json:"userid,omitempty" yaml:"userid,omitempty"`
 }
