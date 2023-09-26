@@ -1,0 +1,44 @@
+name: 'Test Report'
+on:
+  workflow_run:
+    workflows: ['CI']                     # runs after CI workflow
+    types:
+      - completed
+permissions:
+  contents: read
+  actions: read
+  checks: write
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: dorny/test-reporter@v1.6.0
+      with:
+        # Name or regex of artifact containing test results
+        # Regular expression must be enclosed in '/'.
+        # Values from captured groups will replace occurrences of $N in report name.
+        # Example:
+        #   artifact: /test-results-(.*)/
+        #   name: 'Test report $1'
+        #   -> Artifact 'test-result-ubuntu' would create report 'Test report ubuntu'
+        artifact: golangci-lint-test-results
+        
+        # Name of the Check Run which will be created
+        name: golangci-lint-test-results
+        
+        # Comma-separated list of paths to test results
+        # Supports wildcards via [fast-glob](https://github.com/mrmlnc/fast-glob)
+        # All matched result files must be of the same format
+        path: 'lint-report.xml'
+
+        # Format of test results. Supported options:
+        #   dart-json
+        #   dotnet-trx
+        #   flutter-json
+        #   java-junit
+        #   jest-junit
+        #   mocha-json
+        reporter: java-junit
+        
+        # Set action as failed if test report contains any failed test
+        fail-on-error: 'false'

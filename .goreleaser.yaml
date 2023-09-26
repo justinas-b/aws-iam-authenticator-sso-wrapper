@@ -1,0 +1,60 @@
+project_name: aws-iam-authenticator-sso-wrapper
+
+env:
+  - GO111MODULE=on
+
+before:
+  hooks:
+    - go mod download
+
+
+builds:
+  - id: general
+    goos:
+      - windows
+      - linux
+      - freebsd
+
+  - id: macos
+    goos:
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - format: tar.gz
+    # this name template makes the OS and Arch compatible with the results of `uname`.
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+    # use zip for windows archives
+    format_overrides:
+      - goos: windows
+        format: zip
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+
+dockers:
+  - goos: linux # GOOS of the built binaries/packages that should be used. Default: 'linux'
+    goarch: amd64 # GOARCH of the built binaries/packages that should be used. Default: 'amd64'
+    image_templates:
+      - "justinasb/{{ .ProjectName }}:latest"
+      - "justinasb/{{ .ProjectName }}:{{ .Tag }}"
+      - "justinasb/{{ .ProjectName }}:{{ .Major }}"
+    use: buildx
+    build_flag_templates:
+      - "--platform=linux/arm64/v8"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
