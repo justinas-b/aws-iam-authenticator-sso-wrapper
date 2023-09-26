@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches:
-    - master
+    - main
   pull_request:
     types: [opened, reopened]
   schedule:
@@ -39,4 +39,4 @@ jobs:
       - uses: actions/setup-go@v3
       - name: Basic build of the project
         run: |
-          go build main.go
+          go build .
