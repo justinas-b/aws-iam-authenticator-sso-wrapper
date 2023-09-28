@@ -98,4 +98,4 @@ Docker image can be obtained from [justinasb/aws-iam-authenticator-sso-wrapper](
 
 ### Authentication
 
-For this tool to be able to authenticate with AWS (required when translating PermissionSet name to role ARN) it is recommended to use [AWS IRSA](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html), however any authentication methos it supported (you can also add ~/.aws/config or `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables.
+For this tool to be able to authenticate with AWS (required when translating PermissionSet name to role ARN) it is recommended to use [AWS IRSA](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html), however any authentication methos it supported (you can also add `~/.aws/config` or `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables.
