@@ -97,8 +97,24 @@ func translatePermissionSetNameToARN(mapping SSORoleMapping, iamRoles []types.Ro
 	}
 
 	logger.Debug(fmt.Sprintf("Found IAM role %s with ARN %s which matches %s permission set", *iamRoles[idx].RoleName, *iamRoles[idx].Arn, mapping.PermissionSet))
-	mapping.RoleARN = *iamRoles[idx].Arn // Populate RoleARN field with retrieved value
-	mapping.PermissionSet = ""           // Clear PermissionSet field with empty string
+	mapping.RoleARN = removePathFromRoleARN(*iamRoles[idx].Arn, *iamRoles[idx].Path) // Populate RoleARN field with retrieved value and path removed
+	mapping.PermissionSet = ""                                                       // Clear PermissionSet field with empty string
 
 	return mapping, nil
+}
+
+// removePathFromRoleARN removes the specified path from the given role ARN.
+//
+// It takes in two parameters:
+// - arn (string): The role ARN to remove the path from.
+// - path (string): The path to be removed from the role ARN.
+//
+// It returns a string representing the modified role ARN.
+func removePathFromRoleARN(arn string, path string) string {
+	r, err := regexp.Compile(path)
+	if err != nil {
+		panic(err)
+	}
+
+	return r.ReplaceAllString(arn, "/")
 }
