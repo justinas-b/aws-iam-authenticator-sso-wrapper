@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Go: Launch Package",
+            "name": "Go: Launch Package (verbose)",
             "type": "go",
             "request": "launch",
             "mode": "auto",
@@ -15,7 +15,23 @@
                 "-src-configmap", "aws-auth",
                 "-dst-namespace", "kube-system",
                 "-dst-configmap", "aws-auth",
-                "-debug"
+                "-debug",
+                "-interval", "60",
+            ],
+            "envFile": "${workspaceFolder}/.env",
+        },
+        {
+            "name": "Go: Launch Package (info)",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${fileDirname}",
+            "args": [
+                "-src-namespace", "aws-iam-authenticator-sso-wrapper",
+                "-src-configmap", "aws-auth",
+                "-dst-namespace", "kube-system",
+                "-dst-configmap", "aws-auth",
+                "-interval", "10",
             ],
             "envFile": "${workspaceFolder}/.env",
         }
