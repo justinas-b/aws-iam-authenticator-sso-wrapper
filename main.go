@@ -3,6 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
+	"os/signal"
+	"time"
 
 	"go.uber.org/zap"
 	"gopkg.in/yaml.v3"
@@ -15,9 +18,33 @@ var destinationConfigMapName string
 var destinationNamespaceName string
 var defaultAWSRegion string
 var debug bool
+var interval int
 
+// init is a special function in Go that is automatically called before the main function.
+//
+// It calls the parseCliArgs function to parse the command line arguments and the setupLogger function to set up the logger based on the debug flag.
 func init() {
+	parseCliArgs()
+	setupLogger(debug)
+}
 
+// main is the entry point of the program.
+//
+// It initializes a scheduler to periodically execute the updateRoleMappings function.
+// The scheduler runs every interval seconds.
+//
+// No parameters are required.
+// No return types.
+func main() {
+	done := scheduler(updateRoleMappings, time.Duration(interval)*time.Second)
+	defer close(done)
+}
+
+// parseCliArgs parses the command-line arguments and sets the corresponding variables.
+//
+// No parameters.
+// No return type.
+func parseCliArgs() {
 	// Parce cli arguments
 	flag.StringVar(&sourceConfigMapName, "src-configmap", "aws-auth", "Name of the source Kubernetes ConfigMap to read data from and perform transformation upon")
 	flag.StringVar(&sourceNamespaceName, "src-namespace", "", "Kubernetes namespace from which to read ConfigMap which containes mapRoles with permissionset names. If not defined, current namespace of pod will be used")
@@ -25,19 +52,73 @@ func init() {
 	flag.StringVar(&destinationNamespaceName, "dst-namespace", "kube-system", "Name of the destination Kubernetes Namespace where new ConfigMap will be updated")
 	flag.StringVar(&defaultAWSRegion, "aws-region", "us-east-1", "AWS region to use when interacting with IAM service")
 	flag.BoolVar(&debug, "debug", false, "Enable debug logging")
+	flag.IntVar(&interval, "interval", 1800, "Interval in seconds on which application will check for updates")
 	flag.Parse() // Enable command-line parsing
+}
 
-	// Setup logger
+// setupLogger sets up the logger based on the debug flag.
+//
+// It takes a boolean parameter, debug, which specifies whether or not to enable debug logs.
+// There is no return value.
+func setupLogger(debug bool) {
 	zap.ReplaceGlobals(zap.Must(zap.NewProduction()))
 	logger = zap.Must(zap.NewProduction())
 	if debug {
 		logger = zap.Must(zap.NewDevelopment())
 	}
+	defer logger.Sync() // nolint:errcheck
 }
 
-func main() {
+// scheduler schedules the execution of a given function at a specified time interval.
+//
+// Parameters:
+// - f: The function to be executed.
+// - timeInterval: The time interval between function executions.
+//
+// Returns:
+// - done: A channel that can be used to signal the completion of the scheduler.
+func scheduler(f func(), timeInterval time.Duration) chan bool {
 
-	defer logger.Sync() // nolint:errcheck
+	logger.Info(fmt.Sprintf("Starting scheduler to run every %d seconds", timeInterval))
+
+	tick := time.NewTicker(timeInterval)
+	defer tick.Stop()
+
+	done := make(chan bool)
+	sigs := make(chan os.Signal, 1)
+
+	// signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+	signal.Notify(sigs, os.Interrupt)
+
+	go func() {
+		defer logger.Info("Quitting application due to SIGTERM/SIGINT signal")
+		for {
+			f()
+			select {
+			case <-tick.C:
+				continue
+			case <-done:
+				return
+			}
+		}
+	}()
+
+	<-sigs
+	done <- true
+
+	return done
+}
+
+// updateRoleMappings updates the role mappings in the configMap.
+//
+// This function retrieves the current namespace where the pod is running and
+// reads the configMap template from that namespace. It then unmarshals the
+// RoleMappings from the configMap and reads all the SSO roles from AWS IAM.
+// The function replaces the PermissionSet name with the Role ARN and removes
+// the permission set from the configMap if it is not found. It then marshals
+// the new role mappings into a string format and updates the configMap in the
+// destination namespace.
+func updateRoleMappings() {
 
 	logger.Info("Starting process...")
 
@@ -86,4 +167,6 @@ func main() {
 	if err != nil {
 		logger.Panic("Failed to set configMap", zap.Error(err))
 	}
+
+	logger.Info("Finished processing configMaps")
 }
