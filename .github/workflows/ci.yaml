@@ -68,10 +68,12 @@ jobs:
       - name: Run Tests
         run: |
           go test -race -v -coverprofile=coverage.txt -covermode=atomic ./...
-      # - uses: codecov/codecov-action@v3
-      #   with:
-      #     fail_ci_if_error: true
-      #     verbose: true
+      - uses: codecov/codecov-action@v3
+        with:
+          fail_ci_if_error: true
+          verbose: true
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
   build:
     name: Go build
     runs-on: ubuntu-latest
