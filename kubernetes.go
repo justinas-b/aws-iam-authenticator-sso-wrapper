@@ -51,12 +51,6 @@ func getKubernetesClientSet() (*kubernetes.Clientset, error) {
 func getCurrentNamespace() (string, error) {
 	logger.Info("Getting current namespace")
 
-	// Check if LOCAL_NAMESPACE environment variable is defined and use it as a namespace name
-	if namespace, ok := os.LookupEnv("LOCAL_NAMESPACE"); ok {
-		logger.Info(fmt.Sprintf("Current namespace obtained from environment variable: %s", namespace))
-		return namespace, nil
-	}
-
 	// If LOCAL_NAMESPACE environment variable is not defined, get namespace from Kubernetes
 	namespace, err := os.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/namespace")
 	if err != nil {
@@ -76,15 +70,9 @@ func getCurrentNamespace() (string, error) {
 // Returns:
 // - *v1.ConfigMap: the retrieved ConfigMap.
 // - error: an error if the retrieval fails.
-func getConfigMap(configMapName string, namespaceName string) (*v1.ConfigMap, error) {
+func getConfigMap(clientset kubernetes.Interface, configMapName string, namespaceName string) (*v1.ConfigMap, error) {
 
 	logger.Info(fmt.Sprintf("Retrieving ConfigMap %s from namespace %s", configMapName, namespaceName))
-
-	// Creates Kubernetes clientset to authenticate and interact with API
-	clientset, err := getKubernetesClientSet()
-	if err != nil {
-		logger.Panic("Failed to create Kubernetes clientset", zap.Error(err))
-	}
 
 	configMap, err := clientset.CoreV1().ConfigMaps(namespaceName).Get(context.TODO(), configMapName, metav1.GetOptions{})
 
@@ -112,15 +100,9 @@ func getConfigMap(configMapName string, namespaceName string) (*v1.ConfigMap, er
 //
 // Returns:
 //   - error: An error if the creation or update fails.
-func setConfigMap(configMapName string, namespaceName string, data map[string]string) error {
+func setConfigMap(clientset kubernetes.Interface, configMapName string, namespaceName string, data map[string]string) error {
 
 	logger.Info(fmt.Sprintf("Setting ConfigMap %s in namespace %s", configMapName, namespaceName))
-
-	// Creates Kubernetes clientset to authenticate and interact with API
-	clientset, err := getKubernetesClientSet()
-	if err != nil {
-		logger.Panic("Failed to create Kubernetes clientset", zap.Error(err))
-	}
 
 	// Define ConfigMap's metadata
 	cm := v1.ConfigMap{
