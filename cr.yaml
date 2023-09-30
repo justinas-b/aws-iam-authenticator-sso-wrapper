@@ -1,0 +1,5 @@
+owner: justinas-b
+git-base-url: https://api.github.com/
+git-upload-url: https://uploads.github.com/
+git-repo: helm-charts
+push: true

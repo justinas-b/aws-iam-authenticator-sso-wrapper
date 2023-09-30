@@ -1,0 +1,53 @@
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  labels:
+    app: {{ template "__CHART__.fullname" . }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    heritage: "{{ .Release.Service }}"
+    release: "{{ .Release.Name }}"
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Values.deployment.image.tag }}
+    app.kubernetes.io/name: {{ template "__CHART__.fullname" . }}
+    app.kubernetes.io/component: app
+    app.kubernetes.io/managed-by: helm
+  name: {{ template "__CHART__.fullname" . }}
+  annotations:
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: {{ template "__CHART__.fullname" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      {{- if .Values.deployment.podLabels }}
+      labels: {{- toYaml .Values.deployment.podLabels | nindent 8 }}
+      {{- end }}
+      {{- if .Values.deployment.podAnnotations }}
+      annotations: {{- toYaml .Values.deployment.podAnnotations | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccountName: {{ template "__CHART__.fullname" . }}
+      {{- if .Values.deployment.imagePullSecrets }}
+      imagePullSecrets: {{- toYaml .Values.deployment.imagePullSecrets | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.deployment.image.repository }}:{{ .Values.deployment.image.tag }}"
+          {{- if .Values.deployment.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.deployment.image.pullPolicy | quote }}
+          {{- end }}
+          securityContext:
+            allowPrivilegeEscalation: false
+          args: 
+            {{- range .Values.deployment.applicationArguments }}
+            - {{ . }}
+            {{- end }}
+          
+          {{- with .Values.deployment.resources  }}
+          resources:
+              {{- toYaml . | nindent 10 }}
+          {{- end }}
+---

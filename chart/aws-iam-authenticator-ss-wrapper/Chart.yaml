@@ -1,0 +1,9 @@
+name: aws-iam-authenticator-ss-wrapper
+description: Antivirus Chart
+apiVersion: v2
+appVersion: "v0.0.4"
+version: v0.0.4
+home: https://github.com/justinas-b/aws-iam-authenticator-sso-wrapper
+maintainers:
+  - name: justinas-b
+    email: 12399634+justinas-b@users.noreply.github.com
