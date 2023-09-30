@@ -24,7 +24,6 @@ var interval int
 //
 // It calls the parseCliArgs function to parse the command line arguments and the setupLogger function to set up the logger based on the debug flag.
 func init() {
-	parseCliArgs()
 	setupLogger(debug)
 }
 
@@ -36,6 +35,8 @@ func init() {
 // No parameters are required.
 // No return types.
 func main() {
+	parseCliArgs()
+
 	done := scheduler(updateRoleMappings, time.Duration(interval)*time.Second)
 	defer close(done)
 }
@@ -122,6 +123,12 @@ func updateRoleMappings() {
 
 	logger.Info("Starting process...")
 
+	// Creates Kubernetes clientset to authenticate and interact with API
+	clientset, err := getKubernetesClientSet()
+	if err != nil {
+		logger.Panic("Failed to create Kubernetes clientset", zap.Error(err))
+	}
+
 	// Get name of kubernetes namespace pod is running
 	if sourceNamespaceName == "" {
 		var err error
@@ -132,7 +139,7 @@ func updateRoleMappings() {
 	}
 
 	// Read configMap template from current namespace which will be transformed
-	configMap, err := getConfigMap(sourceConfigMapName, sourceNamespaceName)
+	configMap, err := getConfigMap(clientset, sourceConfigMapName, sourceNamespaceName)
 	if err != nil {
 		logger.Panic(fmt.Sprintf("Failed to get configMap %s from namespace %s", sourceConfigMapName, sourceNamespaceName), zap.Error(err))
 	}
@@ -163,7 +170,7 @@ func updateRoleMappings() {
 	cmdata := configMap.Data // Read Data from existing configMap and replates "mapRoles" with new data
 	cmdata["mapRoles"] = string(data)
 
-	err = setConfigMap(destinationConfigMapName, destinationNamespaceName, cmdata) // Update configMap
+	err = setConfigMap(clientset, destinationConfigMapName, destinationNamespaceName, cmdata) // Update configMap
 	if err != nil {
 		logger.Panic("Failed to set configMap", zap.Error(err))
 	}
