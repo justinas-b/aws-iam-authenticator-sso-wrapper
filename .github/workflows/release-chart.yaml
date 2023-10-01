@@ -29,5 +29,5 @@ jobs:
           charts_dir: chart
           config: cr.yaml
         env:
-          CR_TOKEN: "${{ secrets.CR_TOKEN }}"
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
     
