@@ -51,13 +51,13 @@ data:
   mapRoles: |
     - "groups":
       - "system:masters"
-        "permissionSet": AdminRole"
+        "permissionset": AdminRole"
         "username": "AdminRole:{{SessionName}}"
   mapUsers: |
     []
 ```
 
-The tool will process `aws-auth` ConfigMap from it's local kubernetes namespace and transform it to the format AWS EKS cluster expects. After processing ConfigMap, it's output is saved `kube-system` namespace where PermissionSet's name is translated to corresponding role ARN, meaning `"permissionSet": AdminRole"` line will become `"rolearn": "arn:aws:iam::000000000000:role/AWSReservedSSO_AdminRole_0123456789abcdef"`
+The tool will process `aws-auth` ConfigMap from it's local kubernetes namespace and transform it to the format AWS EKS cluster expects. After processing ConfigMap, it's output is saved `kube-system` namespace where PermissionSet's name is translated to corresponding role ARN, meaning `"permissionset": AdminRole"` line will become `"rolearn": "arn:aws:iam::000000000000:role/AWSReservedSSO_AdminRole_0123456789abcdef"`
 
 More details on this problem can found on below issues:
 
