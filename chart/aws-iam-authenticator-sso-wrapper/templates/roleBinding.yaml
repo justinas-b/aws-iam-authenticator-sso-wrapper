@@ -1,8 +1,9 @@
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: aws-auth-configmap-updater
-  namespace: kube-system
+  name: aws-auth-configmap-updater-dst
+  namespace: {{ .Values.deployment.applicationArguments.dstNamespace }}
   labels:
     app: {{ .Chart.Name }}
     helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
@@ -19,5 +20,30 @@ subjects:
   namespace: {{ .Release.Namespace }}
 roleRef:
   kind: Role
-  name: aws-auth-configmap-updater
+  name: aws-auth-configmap-updater-dst
   apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: aws-auth-configmap-updater-src
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Chart.Name }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Values.deployment.image.tag }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/component: app
+    app.kubernetes.io/managed-by: helm
+subjects:
+- kind: ServiceAccount
+  name: {{ .Chart.Name }}
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: Role
+  name: aws-auth-configmap-updater-src
+  apiGroup: rbac.authorization.k8s.io
+---
