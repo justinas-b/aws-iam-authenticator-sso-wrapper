@@ -44,7 +44,8 @@ spec:
           {{- end }}
           securityContext:
             allowPrivilegeEscalation: false
-          args: 
+          command: ["./{{ .Chart.Name }}"]
+          args:
             {{- range .Values.deployment.applicationArguments }}
             - {{ . }}
             {{- end }}
