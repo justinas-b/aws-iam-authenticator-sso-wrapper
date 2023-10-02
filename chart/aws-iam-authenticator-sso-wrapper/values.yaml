@@ -1,16 +1,21 @@
 ---
 deployment:
   replicas: 1
+  
   podLabels:
     environment: "test"
+  
   podAnnotations:
     environment: "test"
+
   # imagePullSecrets:
   #   - name: myImagePullSecret
+
   image:
     repository: justinasb/aws-iam-authenticator-sso-wrapper
     tag: v0.0.11
     pullPolicy: IfNotPresent
+
   resources:
     limits:
       cpu: "200m"
@@ -18,12 +23,14 @@ deployment:
     requests:
       cpu: "100m"
       memory: "64Mi"
+
   applicationArguments:
     dstNamespace: kube-system
     dstConfigmap: aws-auth
     debug: true
     interval: 1800
     srcConfigmap: aws-auth
+    
 serviceaccount:
   labels:
     environment: "test"
