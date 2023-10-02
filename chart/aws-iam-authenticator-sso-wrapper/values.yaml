@@ -5,8 +5,8 @@ deployment:
     environment: "test"
   podAnnotations:
     environment: "test"
-  imagePullSecrets:
-    - name: myImagePullSecret
+  # imagePullSecrets:
+  #   - name: myImagePullSecret
   image:
     repository: justinasb/aws-iam-authenticator-sso-wrapper
     tag: v0.0.10
@@ -21,7 +21,7 @@ deployment:
   applicationArguments:
     - -debug
     - -dst-configmap=aws-auth
-    - --dst-namespace=kube-system
+    - -dst-namespace=kube-system
     - -interval=600
     - -src-configmap=aws-auth
 serviceaccount:
