@@ -7,8 +7,8 @@ on:
 
 permissions:
   contents: read
-  # Optional: allow read access to pull request. Use with `only-new-issues` option.
-  # pull-requests: read
+  actions: read
+  checks: write
   
 jobs:
   golangci-lint:
@@ -57,6 +57,13 @@ jobs:
         with:
           name: golangci-lint-test-results
           path: lint-report.xml
+      - uses: dorny/test-reporter@v1.6.0
+        with:
+          artifact: golangci-lint-test-results
+          name: golangci-lint-test-results
+          path: 'lint-report.xml'
+          reporter: java-junit
+          fail-on-error: 'false'
   test:
     name: Go Test
     runs-on: ubuntu-latest

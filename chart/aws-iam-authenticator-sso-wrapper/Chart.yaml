@@ -1,4 +1,4 @@
-name: aws-iam-authenticator-ss-wrapper
+name: aws-iam-authenticator-sso-wrapper
 description: Antivirus Chart
 apiVersion: v2
 appVersion: "v0.0.5"
