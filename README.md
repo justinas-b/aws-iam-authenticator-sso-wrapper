@@ -90,7 +90,45 @@ Usage of aws-iam-authenticator-sso-wrapper:
 
 ## Deployment
 
-Docker image can be obtained from [justinasb/aws-iam-authenticator-sso-wrapper](https://hub.docker.com/r/justinasb/aws-iam-authenticator-sso-wrapper).
+Docker image can be obtained from [justinasb/aws-iam-authenticator-sso-wrapper](https://hub.docker.com/r/justinasb/aws-iam-authenticator-sso-wrapper). As this application needs to list AWS IAM Roles, it needs to authenticate against AWS. To do so, you need to create new IAM role with below privileges:
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": "iam:ListRoles",
+            "Resource": "*"
+        }
+    ]
+}
+```
+
+For the role trust policy, please enable your AWS EKS cluster to use that role as described in [AWS IRSA](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html) document. Your trust policy should look something like:
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "Federated": "arn:aws:iam::[AWS-ACCOUNT-ID]:oidc-provider/oidc.eks.[EKS-CLUSTER-REGION].amazonaws.com/id/[EKS-CLUSTER-ID]"
+            },
+            "Action": "sts:AssumeRoleWithWebIdentity",
+            "Condition": {
+                "StringEquals": {
+                    "oidc.eks.[EKS-CLUSTER-REGION].amazonaws.com/id/[EKS-CLUSTER-ID]:sub": "system:serviceaccount:aws-iam-authenticator-sso-wrapper:aws-iam-authenticator-sso-wrapper"
+                }
+            }
+        }
+    ]
+}
+```
+
+Once you have created new role, dont forget to set `serviceaccount.annotations.eks.amazonaws.com/role-arn` value on Helm chart to actual role ARN.
 
 ### Helm chart
 
