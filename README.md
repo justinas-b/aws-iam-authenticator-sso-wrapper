@@ -132,6 +132,40 @@ Once you have created new role, dont forget to set `serviceaccount.annotations.e
 
 ### Helm chart
 
+Add helm repo locally:
+
+```txt
+> helm repo add aws-iam-authenticator-sso-wrapper https://justinas-b.github.io/aws-iam-authenticator-sso-wrapper/
+
+"aws-iam-authenticator-sso-wrapper" has been added to your repositories
+```
+
+Update helm repo:
+
+```txt
+> helm repo update
+
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "aws-iam-authenticator-sso-wrapper" chart repository
+```
+
+Deploy application:
+
+```txt
+> helm install \
+  aws-iam-authenticator-sso-wrapper justinas-b/aws-iam-authenticator-sso-wrapper \
+  --namespace aws-iam-authenticator-sso-wrapper \
+  --create-namespace \
+  --set serviceaccount.annotations."eks\.amazonaws\.com/role-arn"=arn:aws:iam::123456789012:role/my-iam-role
+
+NAME: aws-iam-authenticator-sso-wrapper
+LAST DEPLOYED: Mon Oct  2 15:23:36 2023
+NAMESPACE: aws-iam-authenticator-sso-wrapper
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+```
+
 [work-in-progress]
 
 ### Authentication

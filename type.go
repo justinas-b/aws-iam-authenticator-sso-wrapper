@@ -6,7 +6,7 @@ type SSORoleMapping struct {
 	RoleARN string `json:"rolearn,omitempty" yaml:"rolearn,omitempty"`
 
 	// RoleARN is the AWS Resource Name of the role. (e.g., "arn:aws:iam::000000000000:role/Foo").
-	PermissionSet string `json:"permissionset,omitempty" yaml:"permissionSet,omitempty"`
+	PermissionSet string `json:"permissionset,omitempty" yaml:"permissionset,omitempty"`
 
 	// Username is the username pattern that this instances assuming this
 	// role will have in Kubernetes.
