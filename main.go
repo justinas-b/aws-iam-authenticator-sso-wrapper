@@ -21,8 +21,6 @@ var debug bool
 var interval int
 
 // init is a special function in Go that is automatically called before the main function.
-//
-// It calls the parseCliArgs function to parse the command line arguments and the setupLogger function to set up the logger based on the debug flag.
 func init() {
 }
 

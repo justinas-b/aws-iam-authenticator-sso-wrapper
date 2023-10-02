@@ -9,6 +9,10 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/iam/types"
 )
 
+func init() {
+	setupLogger(true)
+}
+
 func TestRemovePathFromRoleARN(t *testing.T) {
 
 	// Tests if a valid path is removed from role ARN
