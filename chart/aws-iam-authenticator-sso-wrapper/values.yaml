@@ -19,11 +19,11 @@ deployment:
       cpu: "100m"
       memory: "64Mi"
   applicationArguments:
-    - -debug
-    - -dst-configmap=aws-auth
-    - -dst-namespace=kube-system
-    - -interval=600
-    - -src-configmap=aws-auth
+    dstNamespace: kube-system
+    dstConfigmap: aws-auth
+    debug: true
+    interval: 1800
+    srcConfigmap: aws-auth
 serviceaccount:
   labels:
     environment: "test"
