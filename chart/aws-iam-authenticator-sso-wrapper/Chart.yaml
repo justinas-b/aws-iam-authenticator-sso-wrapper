@@ -1,7 +1,7 @@
 name: aws-iam-authenticator-ss-wrapper
 description: Antivirus Chart
 apiVersion: v2
-appVersion: "v0.0.4"
+appVersion: "v0.0.5"
 version: v0.0.5
 home: https://github.com/justinas-b/aws-iam-authenticator-sso-wrapper
 maintainers:
