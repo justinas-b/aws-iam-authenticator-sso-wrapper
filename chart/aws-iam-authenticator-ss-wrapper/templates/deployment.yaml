@@ -3,22 +3,22 @@ apiVersion: "apps/v1"
 kind: "Deployment"
 metadata:
   labels:
-    app: {{ template "__CHART__.fullname" . }}
+    app: {{ template "__CHART__.name" . }}
     helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     heritage: "{{ .Release.Service }}"
     release: "{{ .Release.Name }}"
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/version: {{ .Values.deployment.image.tag }}
-    app.kubernetes.io/name: {{ template "__CHART__.fullname" . }}
+    app.kubernetes.io/name: {{ template "__CHART__.name" . }}
     app.kubernetes.io/component: app
     app.kubernetes.io/managed-by: helm
-  name: {{ template "__CHART__.fullname" . }}
+  name: {{ template "__CHART__.name" . }}
   annotations:
 spec:
   replicas: {{ .Values.deployment.replicas }}
   selector:
     matchLabels:
-      app: {{ template "__CHART__.fullname" . }}
+      app: {{ template "__CHART__.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
@@ -29,7 +29,7 @@ spec:
       annotations: {{- toYaml .Values.deployment.podAnnotations | nindent 8 }}
       {{- end }}
     spec:
-      serviceAccountName: {{ template "__CHART__.fullname" . }}
+      serviceAccountName: {{ template "__CHART__.name" . }}
       {{- if .Values.deployment.imagePullSecrets }}
       imagePullSecrets: {{- toYaml .Values.deployment.imagePullSecrets | nindent 8 }}
       {{- end }}
