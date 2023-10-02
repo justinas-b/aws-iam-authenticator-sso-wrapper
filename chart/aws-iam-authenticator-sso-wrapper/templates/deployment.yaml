@@ -13,6 +13,7 @@ metadata:
     app.kubernetes.io/component: app
     app.kubernetes.io/managed-by: helm
   name: {{ .Chart.Name }}
+  namespace: {{ .Release.Namespace }}
   annotations:
 spec:
   replicas: {{ .Values.deployment.replicas }}
@@ -44,11 +45,23 @@ spec:
           {{- end }}
           securityContext:
             allowPrivilegeEscalation: false
-          args: 
-            {{- range .Values.deployment.applicationArguments }}
-            - {{ . }}
+          command: ["./{{ .Chart.Name }}"]
+          args:
+            {{- if .Values.deployment.applicationArguments.dstNamespace }}
+            - "-dst-namespace={{ toYaml .Values.deployment.applicationArguments.dstNamespace }}"
             {{- end }}
-          
+            {{- if .Values.deployment.applicationArguments.dstConfigmap }}
+            - "-dst-configmap={{ toYaml .Values.deployment.applicationArguments.dstConfigmap }}"
+            {{- end }}
+            {{- if .Values.deployment.applicationArguments.srcConfigmap }}
+            - "-src-configmap={{ toYaml .Values.deployment.applicationArguments.srcConfigmap }}"
+            {{- end }}
+            {{- if .Values.deployment.applicationArguments.interval }}
+            - "-interval={{ toYaml .Values.deployment.applicationArguments.interval }}"
+            {{- end }}
+            {{- if .Values.deployment.applicationArguments.debug }}
+            - "-debug"
+            {{- end }}
           {{- with .Values.deployment.resources  }}
           resources:
               {{- toYaml . | nindent 12 }}

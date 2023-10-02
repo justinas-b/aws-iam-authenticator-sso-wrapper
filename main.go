@@ -24,7 +24,6 @@ var interval int
 //
 // It calls the parseCliArgs function to parse the command line arguments and the setupLogger function to set up the logger based on the debug flag.
 func init() {
-	setupLogger(debug)
 }
 
 // main is the entry point of the program.
@@ -36,7 +35,7 @@ func init() {
 // No return types.
 func main() {
 	parseCliArgs()
-
+	setupLogger(debug)
 	done := scheduler(updateRoleMappings, time.Duration(interval)*time.Second)
 	defer close(done)
 }
