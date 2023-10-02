@@ -1,4 +1,4 @@
-name: Lint and Test Charts
+name: CI (chart) - Lint and Test Charts
 
 on:
   pull_request:
@@ -46,4 +46,4 @@ jobs:
           node_image: kindest/node:${{ matrix.k8s }}
       - name: Run chart-testing (install)
         if: steps.list-changed.outputs.changed == 'true'
-        run: ct install --target-branch ${{ github.event.repository.default_branch }}
+        run: ct install --target-branch ${{ github.event.repository.default_branch }} --chart-dirs chart
