@@ -11,9 +11,9 @@ jobs:
     strategy:
       matrix:
         k8s:
-          - v1.28.2
-          - v1.27.6
-          - v1.26.9
+          - v1.28.0
+          - v1.27.3
+          - v1.26.6
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -38,7 +38,7 @@ jobs:
           fi
       - name: Run chart-testing (lint)
         if: steps.list-changed.outputs.changed == 'true'
-        run: ct lint --target-branch ${{ github.event.repository.default_branch }}
+        run: ct lint --target-branch ${{ github.event.repository.default_branch }} --chart-dirs chart
       - name: Create kind cluster
         if: steps.list-changed.outputs.changed == 'true'
         uses: helm/kind-action@v1.7.0
