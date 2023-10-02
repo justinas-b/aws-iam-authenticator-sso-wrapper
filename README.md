@@ -1,6 +1,6 @@
 # aws-iam-authenticator-sso-wrapper
 
-[![CI](https://github.com/justinas-b/aws-iam-authenticator-sso-wrapper/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/justinas-b/aws-iam-authenticator-sso-wrapper/actions/workflows/ci.yaml?event=schedule)
+[![CI](https://github.com/justinas-b/aws-iam-authenticator-sso-wrapper/actions/workflows/app-ci.yaml/badge.svg?branch=main)](https://github.com/justinas-b/aws-iam-authenticator-sso-wrapper/actions/workflows/app-ci.yaml?event=schedule)
 ![CodeQL](https://github.com/justinas-b/aws-iam-authenticator-sso-wrapper/workflows/CodeQL/badge.svg)
 [![codecov](https://codecov.io/gh/justinas-b/aws-iam-authenticator-sso-wrapper/branch/main/graph/badge.svg)](https://codecov.io/gh/justinas-b/aws-iam-authenticator-sso-wrapper)
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/justinas-b/aws-iam-authenticator-sso-wrapper?sort=semver)
