@@ -1,4 +1,4 @@
-name: Lint and Test Charts
+name: CI (chart)
 
 on:
   pull_request:
@@ -7,16 +7,19 @@ on:
 
 jobs:
   lint-chart:
+    name: Lint and Test Charts
     runs-on: ubuntu-latest
     strategy:
       matrix:
         k8s:
-          - v1.28.2
-          - v1.27.6
-          - v1.26.9
+          - v1.28.0
+          - v1.27.3
+          - v1.26.6
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - name: Set up Helm
         uses: azure/setup-helm@v3
         with:
@@ -36,7 +39,7 @@ jobs:
           fi
       - name: Run chart-testing (lint)
         if: steps.list-changed.outputs.changed == 'true'
-        run: ct lint --target-branch ${{ github.event.repository.default_branch }}
+        run: ct lint --target-branch ${{ github.event.repository.default_branch }} --chart-dirs chart
       - name: Create kind cluster
         if: steps.list-changed.outputs.changed == 'true'
         uses: helm/kind-action@v1.7.0
@@ -44,4 +47,4 @@ jobs:
           node_image: kindest/node:${{ matrix.k8s }}
       - name: Run chart-testing (install)
         if: steps.list-changed.outputs.changed == 'true'
-        run: ct install --target-branch ${{ github.event.repository.default_branch }}
+        run: ct install --target-branch ${{ github.event.repository.default_branch }} --chart-dirs chart

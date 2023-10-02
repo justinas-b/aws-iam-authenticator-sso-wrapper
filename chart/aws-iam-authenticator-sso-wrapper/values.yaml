@@ -9,7 +9,7 @@ deployment:
     - name: myImagePullSecret
   image:
     repository: justinasb/aws-iam-authenticator-sso-wrapper
-    tag: v0.0.4
+    tag: v0.0.5
     pullPolicy: IfNotPresent
   resources:
     limits:
@@ -29,3 +29,4 @@ serviceaccount:
     environment: "test"
   annotations:
     eks.amazonaws.com/role-arn: "arn:aws:iam::123456789012:role/my-iam-role"
+---
