@@ -5,4 +5,4 @@ RUN mkdir -p /app
 WORKDIR /app
 COPY aws-iam-authenticator-sso-wrapper .
 
-CMD ["/aws-iam-authenticator-sso-wrapper"]
+CMD ["./aws-iam-authenticator-sso-wrapper"]
