@@ -36,4 +36,21 @@ serviceaccount:
     environment: "test"
   annotations:
     eks.amazonaws.com/role-arn: "arn:aws:iam::123456789012:role/my-iam-role"
+
+sourceConfigmap: |-
+  mapAccounts: |
+    []
+  mapUsers: |
+    []
+  mapRoles: |
+    - "groups":
+      - "system:masters"
+      "rolearn": "arn:aws:iam::000000000000:role/AWSReservedSSO_AdminRole_0123456789abcdef"
+      "username": "AdminRole:{{SessionName}}"
+    - "groups":
+      - "system:bootstrappers"
+      - "system:nodes"
+      - "system:masters"
+      "permissionset": "SRE"
+      "username": "SRE:{{SessionName}}"
 ---
