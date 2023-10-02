@@ -13,6 +13,10 @@ import (
 	"k8s.io/client-go/kubernetes/fake"
 )
 
+func init() {
+	setupLogger(true)
+}
+
 func TestGetConfigMap(t *testing.T) {
 	// Test when ConfigMap does not exist
 	t.Run("ConfigMap does not exist", func(t *testing.T) {

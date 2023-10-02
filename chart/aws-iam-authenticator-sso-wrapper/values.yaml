@@ -13,7 +13,7 @@ deployment:
 
   image:
     repository: justinasb/aws-iam-authenticator-sso-wrapper
-    tag: v0.0.11
+    tag: v0.0.13
     pullPolicy: IfNotPresent
 
   resources:
