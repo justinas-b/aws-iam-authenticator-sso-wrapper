@@ -2,6 +2,7 @@ project_name: aws-iam-authenticator-sso-wrapper
 
 env:
   - GO111MODULE=on
+  - CGO_ENABLED=0
 
 before:
   hooks:
