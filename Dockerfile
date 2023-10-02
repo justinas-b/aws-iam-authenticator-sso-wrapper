@@ -1,4 +1,8 @@
-FROM alpine:3.18.3
-COPY aws-iam-authenticator-sso-wrapper /usr/bin/aws-iam-authenticator-sso-wrapper
+FROM golang:1.21-alpine
 RUN apk update && apk upgrade
-ENTRYPOINT [ "/usr/bin/aws-iam-authenticator-sso-wrapper" ]
+
+RUN mkdir -p /app
+WORKDIR /app
+COPY aws-iam-authenticator-sso-wrapper .
+
+CMD ["/aws-iam-authenticator-sso-wrapper"]
