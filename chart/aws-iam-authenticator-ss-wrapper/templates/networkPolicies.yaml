@@ -4,13 +4,13 @@ kind: NetworkPolicy
 metadata:
   name: default-deny-all
   labels:
-    app: {{ template "__CHART__.name" . }}
+    app: {{ .Chart.Name }}
     helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    heritage: "{{ .Release.Service }}"
-    release: "{{ .Release.Name }}"
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/version: {{ .Values.deployment.image.tag }}
-    app.kubernetes.io/name: {{ template "__CHART__.name" . }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
     app.kubernetes.io/component: app
     app.kubernetes.io/managed-by: helm
 spec:
@@ -23,13 +23,13 @@ kind: NetworkPolicy
 metadata:
   name: allow-outbound-https
   labels:
-    app: {{ template "__CHART__.name" . }}
+    app: {{ .Chart.Name }}
     helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    heritage: "{{ .Release.Service }}"
-    release: "{{ .Release.Name }}"
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/version: {{ .Values.deployment.image.tag }}
-    app.kubernetes.io/name: {{ template "__CHART__.name" . }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
     app.kubernetes.io/component: app
     app.kubernetes.io/managed-by: helm
 spec:
