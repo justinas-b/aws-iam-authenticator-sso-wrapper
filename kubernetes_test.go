@@ -82,7 +82,7 @@ func TestSetConfigMap(t *testing.T) {
 		cmdata := map[string]string{
 			"mapAccounts": "[]\n",
 			"mapUsers":    "[]\n",
-			"mapRoles":    "- rolearn: arn:aws:iam::190058439852:role/platform-development-dev-eks2019102907023762960000000b\n  username: system:node:{{EC2PrivateDNSName}}\n  groups:\n    - system:bootstrappers\n    - system:nodes\n- rolearn: arn:aws:iam::190058439852:role/terraform-role\n  username: terraform:{{SessionName}}\n  groups:\n    - system:masters\n- rolearn: arn:aws:iam::190058439852:role/AWSReservedSSO_admin-dev-pu_07572db8b73986b8\n  username: admin:{{SessionName}}\n  groups:\n    - system:masters\n- username: admin:{{SessionName}}\n",
+			"mapRoles":    "- rolearn: arn:aws:iam::123456789012:role/AWSReservedSSO_devops_0123456789abcdef\n  username: devops:{{SessionName}}\n  groups:\n    - system:masters\n",
 		}
 
 		// Update configMap which does not exist (should create new configMap)
@@ -112,7 +112,7 @@ func TestSetConfigMap(t *testing.T) {
 		cmdata := map[string]string{
 			"mapAccounts": "[]\n",
 			"mapUsers":    "[]\n",
-			"mapRoles":    "- rolearn: arn:aws:iam::190058439852:role/platform-development-dev-eks2019102907023762960000000b\n  username: system:node:{{EC2PrivateDNSName}}\n  groups:\n    - system:bootstrappers\n    - system:nodes\n- rolearn: arn:aws:iam::190058439852:role/terraform-role\n  username: terraform:{{SessionName}}\n  groups:\n    - system:masters\n- rolearn: arn:aws:iam::190058439852:role/AWSReservedSSO_admin-dev-pu_07572db8b73986b8\n  username: admin:{{SessionName}}\n  groups:\n    - system:masters\n- username: admin:{{SessionName}}\n",
+			"mapRoles":    "- rolearn: arn:aws:iam::123456789012:role/AWSReservedSSO_devops_0123456789abcdef\n  username: devops:{{SessionName}}\n  groups:\n    - system:masters\n",
 		}
 
 		err := setConfigMap(fakeClientSet, "NOT_EXISTING_CONFIGMAP", "NOT_EXISTING_NAMESPACE", cmdata)
@@ -161,7 +161,7 @@ func TestSetConfigMap(t *testing.T) {
 			Data: map[string]string{
 				"mapAccounts": "[]\n",
 				"mapUsers":    "[]\n",
-				"mapRoles":    "- rolearn: arn:aws:iam::190058439852:role/platform-development-dev-eks2019102907023762960000000b\n  username: system:node:{{EC2PrivateDNSName}}\n  groups:\n    - system:bootstrappers\n    - system:nodes\n\n",
+				"mapRoles":    "- rolearn: arn:aws:iam::123456789012:role/AWSReservedSSO_devops_0123456789abcdef\n  username: devops:{{SessionName}}\n  groups:\n    - system:masters\n",
 			},
 		}
 
@@ -171,7 +171,7 @@ func TestSetConfigMap(t *testing.T) {
 		cmdata := map[string]string{
 			"mapAccounts": "[]\n",
 			"mapUsers":    "[]\n",
-			"mapRoles":    "- rolearn: arn:aws:iam::190058439852:role/platform-development-dev-eks2019102907023762960000000b\n  username: system:node:{{EC2PrivateDNSName}}\n  groups:\n    - system:bootstrappers\n    - system:nodes\n- rolearn: arn:aws:iam::190058439852:role/terraform-role\n  username: terraform:{{SessionName}}\n  groups:\n    - system:masters\n- rolearn: arn:aws:iam::190058439852:role/AWSReservedSSO_admin-dev-pu_07572db8b73986b8\n  username: admin:{{SessionName}}\n  groups:\n    - system:masters\n- username: admin:{{SessionName}}\n",
+			"mapRoles":    "- rolearn: arn:aws:iam::123456789012:role/AWSReservedSSO_devops_0123456789abcdef\n  username: devops:{{SessionName}}\n  groups:\n    - system:masters\n",
 		}
 
 		err := setConfigMap(fakeClientSet, cm.Name, ns.Name, cmdata)
