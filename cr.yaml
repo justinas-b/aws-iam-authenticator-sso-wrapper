@@ -1,2 +1,2 @@
 push: true
-release-name-template: "chart-{{ .Name }}-{{ .Version }}"
+release-name-template: "chart-{{ .Version }}"
