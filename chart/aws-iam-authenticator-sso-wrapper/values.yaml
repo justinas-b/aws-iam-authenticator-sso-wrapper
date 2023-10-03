@@ -1,21 +1,16 @@
 ---
 deployment:
   replicas: 1
-  
   podLabels:
     environment: "test"
-  
   podAnnotations:
     environment: "test"
-
   # imagePullSecrets:
   #   - name: myImagePullSecret
-
   image:
     repository: justinasb/aws-iam-authenticator-sso-wrapper
     tag: v0.0.13
     pullPolicy: IfNotPresent
-
   resources:
     limits:
       cpu: "200m"
@@ -23,17 +18,31 @@ deployment:
     requests:
       cpu: "100m"
       memory: "64Mi"
-
   applicationArguments:
     dstNamespace: kube-system
     dstConfigmap: aws-auth
     debug: true
     interval: 1800
     srcConfigmap: aws-auth
-    
 serviceaccount:
   labels:
     environment: "test"
   annotations:
     eks.amazonaws.com/role-arn: "arn:aws:iam::123456789012:role/my-iam-role"
+sourceConfigmap:
+  mapAccounts: |
+    []
+  mapUsers: |
+    []
+  mapRoles: |
+    - "groups":
+      - "system:masters"
+      "rolearn": "arn:aws:iam::000000000000:role/AWSReservedSSO_AdminRole_0123456789abcdef"
+      "username": "AdminRole:{{SessionName}}"
+    - "groups":
+      - "system:bootstrappers"
+      - "system:nodes"
+      - "system:masters"
+      "permissionset": "SRE"
+      "username": "SRE:{{SessionName}}"
 ---
