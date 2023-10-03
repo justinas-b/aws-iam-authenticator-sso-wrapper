@@ -2,6 +2,8 @@ name: CI (app)
 
 on:
   pull_request:
+    paths-ignore:
+      - 'chart/**'
   schedule:
     - cron: '0 8 * * *'
 
