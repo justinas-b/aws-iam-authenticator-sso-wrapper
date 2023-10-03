@@ -14,6 +14,8 @@ metadata:
     app.kubernetes.io/managed-by: helm
   name: {{ .Values.deployment.applicationArguments.srcConfigmap }}
   namespace: {{ .Release.Namespace }}
-data: |-
-  {{- .Values.sourceConfigmap | nindent 2 }}
+data:
+  {{- with .Values.sourceConfigmap }}
+  {{- toYaml . | nindent 2 }}
+  {{- end }}
 ---
