@@ -16,7 +16,7 @@ metadata:
     app.kubernetes.io/managed-by: helm
 subjects:
 - kind: ServiceAccount
-  name: {{ .Chart.Name }}
+  name: {{ .Values.serviceaccount.name }}
   namespace: {{ .Release.Namespace }}
 roleRef:
   kind: Role
@@ -40,7 +40,7 @@ metadata:
     app.kubernetes.io/managed-by: helm
 subjects:
 - kind: ServiceAccount
-  name: {{ .Chart.Name }}
+  name: {{ .Values.serviceaccount.name }}
   namespace: {{ .Release.Namespace }}
 roleRef:
   kind: Role

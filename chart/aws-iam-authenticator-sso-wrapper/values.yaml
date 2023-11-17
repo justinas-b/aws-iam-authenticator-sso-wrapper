@@ -25,6 +25,8 @@ deployment:
     interval: 1800
     srcConfigmap: aws-auth
 serviceaccount:
+  create: true
+  name: aws-iam-authenticator-sso-wrapper
   labels:
     environment: "test"
   annotations:
