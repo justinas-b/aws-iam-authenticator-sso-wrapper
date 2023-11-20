@@ -107,6 +107,24 @@ func scheduler(f func(), timeInterval time.Duration) chan bool {
 	return done
 }
 
+// Get AWS account ID
+func getAccountId() (string, error) {
+	cfg, err := config.LoadDefaultConfig(context.TODO())
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	client := sts.NewFromConfig(cfg)
+	input := &sts.GetCallerIdentityInput{}
+
+	req, err := client.GetCallerIdentity(context.TODO(), input)
+	if err != nil {
+		return "", err
+	}
+
+	return *req.Account, nil
+}
+
 // updateRoleMappings updates the role mappings in the configMap.
 //
 // This function retrieves the current namespace where the pod is running and
@@ -156,7 +174,7 @@ func updateRoleMappings() {
 	}
 
 	// Replace PermissionSet name with Role ARN, if permission set is not found - remove it from configMap
-	roleMappingsUpdated := transformRoleMappings(roleMappings, awsIAMRoles)
+	roleMappingsUpdated := transformRoleMappings(roleMappings, awsIAMRoles, getAccountId())
 
 	// Marshal new role mappings into string format and update configMap on destination namespace
 	data, err := yaml.Marshal(roleMappingsUpdated) // Marshal new role mappings into string format
