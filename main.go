@@ -6,6 +6,9 @@ import (
 	"os"
 	"os/signal"
 	"time"
+	
+	"github.com/aws/aws-sdk-go-v2/service/sts"
+	"github.com/aws/aws-sdk-go-v2/config"
 
 	"go.uber.org/zap"
 	"gopkg.in/yaml.v3"
