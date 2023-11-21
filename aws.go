@@ -138,5 +138,7 @@ func getAccountId() (string, error) {
 		return "", err
 	}
 
+        logger.Debug(fmt.Sprintf("Retrievied %s as AWS Account ID", *req.Account))
+	
 	return *req.Account, nil
 }
