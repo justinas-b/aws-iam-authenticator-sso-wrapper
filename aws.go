@@ -122,12 +122,10 @@ func removePathFromRoleARN(arn string, path string) string {
 
 // Get AWS account ID
 func getAccountId() (string, error) {
-	cfg, err := config.LoadDefaultConfig(context.TODO())
+	client, err := getAWSClient()
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal("Unable to load SDK config, %v", zap.Error(err))
 	}
-
-	client := sts.NewFromConfig(cfg)
 	input := &sts.GetCallerIdentityInput{}
 
 	req, err := client.GetCallerIdentity(context.TODO(), input)
