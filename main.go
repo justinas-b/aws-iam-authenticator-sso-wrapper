@@ -160,7 +160,7 @@ func updateRoleMappings() {
 		logger.Panic("Failed to read AWS Account ID", zap.Error(err))
 		
 	// Replace PermissionSet name with Role ARN, if permission set is not found - remove it from configMap
-	roleMappingsUpdated := transformRoleMappings(roleMappings, awsIAMRoles, getAccountId())
+	roleMappingsUpdated := transformRoleMappings(roleMappings, awsIAMRoles, accountId)
 
 	// Marshal new role mappings into string format and update configMap on destination namespace
 	data, err := yaml.Marshal(roleMappingsUpdated) // Marshal new role mappings into string format
