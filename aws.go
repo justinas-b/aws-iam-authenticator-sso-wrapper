@@ -14,21 +14,18 @@ import (
 	"golang.org/x/exp/slices"
 )
 
-// getAWSClient returns an Amazon IAM service client.
+// getAWSClientConfig returns an aws.Config to be used on clients.
 //
-// It initializes the AWS SDK and creates an Amazon IAM service client using the default configuration.
-// It takes no parameters and returns a pointer to an iam.Client and an error.
-func getAWSClient() (*iam.Client, error) {
+// It initializes the AWS SDK and creates an Amazon client configuration.
+// It takes no parameters and returns a aws.Config and an error.
+func getAWSClientConfig() (aws.Config, error) {
 	// Initialize AWS SDK
 	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(defaultAWSRegion))
 	if err != nil {
 		return nil, err
 	}
 
-	// Create an Amazon IAM service client
-	client := iam.NewFromConfig(cfg)
-
-	return client, nil
+	return cfg, nil
 }
 
 // listSSORoles retrieves a list of IAM roles that are used by AWS SSO service.
@@ -42,11 +39,12 @@ func listSSORoles() ([]types.Role, error) {
 
 	logger.Info("Retrieving SSO roles from AWS IAM...")
 
-	client, err := getAWSClient()
+	cfg, err := getAWSClientConfig()
 	if err != nil {
 		logger.Fatal("Unable to load SDK config, %v", zap.Error(err))
 	}
-
+	client := iam.NewFromConfig(cfg)
+	
 	// Create a list roles request
 	params := &iam.ListRolesInput{
 		MaxItems:   aws.Int32(10),
@@ -122,7 +120,12 @@ func removePathFromRoleARN(arn string, path string) string {
 
 // Get AWS account ID
 func getAccountId() (string, error) {
-	client, err := getAWSClient()
+	cfg, err := getAWSClientConfig()
+	if err != nil {
+		logger.Fatal("Unable to load SDK config, %v", zap.Error(err))
+	}
+	
+	client := sts.NewFromConfig(cfg)
 	if err != nil {
 		logger.Fatal("Unable to load SDK config, %v", zap.Error(err))
 	}
