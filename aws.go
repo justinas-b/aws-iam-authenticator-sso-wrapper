@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
+	"github.com/aws/aws-sdk-go-v2/service/sts"
 	"github.com/aws/aws-sdk-go-v2/service/iam/types"
 	"go.uber.org/zap"
 	"golang.org/x/exp/slices"
@@ -117,4 +118,22 @@ func removePathFromRoleARN(arn string, path string) string {
 	}
 
 	return r.ReplaceAllString(arn, "/")
+}
+
+// Get AWS account ID
+func getAccountId() (string, error) {
+	cfg, err := config.LoadDefaultConfig(context.TODO())
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	client := sts.NewFromConfig(cfg)
+	input := &sts.GetCallerIdentityInput{}
+
+	req, err := client.GetCallerIdentity(context.TODO(), input)
+	if err != nil {
+		return "", err
+	}
+
+	return *req.Account, nil
 }

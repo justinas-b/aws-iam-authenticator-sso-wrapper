@@ -6,9 +6,6 @@ import (
 	"os"
 	"os/signal"
 	"time"
-	
-	"github.com/aws/aws-sdk-go-v2/service/sts"
-	"github.com/aws/aws-sdk-go-v2/config"
 
 	"go.uber.org/zap"
 	"gopkg.in/yaml.v3"
@@ -108,24 +105,6 @@ func scheduler(f func(), timeInterval time.Duration) chan bool {
 	done <- true
 
 	return done
-}
-
-// Get AWS account ID
-func getAccountId() (string, error) {
-	cfg, err := config.LoadDefaultConfig(context.TODO())
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	client := sts.NewFromConfig(cfg)
-	input := &sts.GetCallerIdentityInput{}
-
-	req, err := client.GetCallerIdentity(context.TODO(), input)
-	if err != nil {
-		return "", err
-	}
-
-	return *req.Account, nil
 }
 
 // updateRoleMappings updates the role mappings in the configMap.

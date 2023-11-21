@@ -37,7 +37,7 @@ data:
     []
 ```
 
-While using this tool, it enables you to deplou `aws-auth` ConfigMap to tool's namespace and provide PermissionSet's name instead of role ARN under `mapRoles` key:
+While using this tool, it enables you to deploy `aws-auth` ConfigMap to tool's namespace and provide PermissionSet's name instead of role ARN under `mapRoles` key:
 
 ```yaml
 apiVersion: v1
@@ -56,6 +56,46 @@ data:
   mapUsers: |
     []
 ```
+
+The Tool also allows a placeholder `$ACCOUNTID` in the role ARN, to give a generic role. This is for a specific use case where multiple clusters in multiple accounts use a role of the same name, but the ARN changes because of account ID.
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aws-auth
+  namespace: aws-iam-authenticator-sso-wrapper
+data:
+  mapAccounts: |
+    []
+  mapRoles: |
+    - "groups":
+      - "system:masters"
+        "rolearn": "arn:aws:iam::$ACCOUNTID:role/generic-role"
+        "username": "AdminRole:{{SessionName}}"
+  mapUsers: |
+    []
+```
+The above config map retrieves the AWS account ID and replaces `$ACCOUNTID`
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aws-auth
+  namespace: kube-system
+data:
+  mapAccounts: |
+    []
+  mapRoles: |
+    - "groups":
+      - "system:masters"
+        "rolearn": "arn:aws:iam::123456789:role/generic-role"
+        "username": "AdminRole:{{SessionName}}"
+  mapUsers: |
+    []
+```
+
 
 The tool will process `aws-auth` ConfigMap from it's local kubernetes namespace and transform it to the format AWS EKS cluster expects. After processing ConfigMap, it's output is saved `kube-system` namespace where PermissionSet's name is translated to corresponding role ARN, meaning `"permissionset": AdminRole"` line will become `"rolearn": "arn:aws:iam::000000000000:role/AWSReservedSSO_AdminRole_0123456789abcdef"`
 
@@ -99,7 +139,10 @@ Docker image can be obtained from [justinasb/aws-iam-authenticator-sso-wrapper](
         {
             "Sid": "VisualEditor0",
             "Effect": "Allow",
-            "Action": "iam:ListRoles",
+            "Action": [
+              "iam:ListRoles",
+              "sts:GetCallerIdentity"
+            ],
             "Resource": "*"
         }
     ]
