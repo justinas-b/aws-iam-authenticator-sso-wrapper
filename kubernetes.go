@@ -162,8 +162,7 @@ func transformRoleMappings(roleMappings []SSORoleMapping, awsIAMRoles []types.Ro
 				roleMapping.RoleARN = strings.Replace(roleMapping.RoleARN, "$ACCOUNTID", accountId, -1)
 				roleMappingsUpdated = append(roleMappingsUpdated, roleMapping)
 				continue
-			}
-			else {	
+			} else {	
 				logger.Debug("Role Mapping does not need to be translated", zap.Any("roleMapping", roleMapping))
 				roleMappingsUpdated = append(roleMappingsUpdated, roleMapping)
 				continue
