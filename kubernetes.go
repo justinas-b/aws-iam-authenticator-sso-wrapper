@@ -157,7 +157,7 @@ func transformRoleMappings(roleMappings []SSORoleMapping, awsIAMRoles []types.Ro
 		// skip this itteration and add object to updated list
 		if (roleMapping.PermissionSet == "") || (roleMapping.RoleARN != "") {
 			//Check if rolemapping requires fetching the accountid of the aws account
-			if(strings.contains(roleMapping.RoleARN, "$ACCOUNTID")) {
+			if(strings.Contains(roleMapping.RoleARN, "$ACCOUNTID")) {
 				logger.Info("Replacing $ACCOUNTID with Actual account ID")
 				roleMapping.RoleARN = strings.Replace(roleMapping.RoleARN, "$ACCOUNTID", accountId, -1)
 				roleMappingsUpdated = append(roleMappingsUpdated, roleMapping)
