@@ -22,7 +22,7 @@ func getAWSClientConfig() (aws.Config, error) {
 	// Initialize AWS SDK
 	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(defaultAWSRegion))
 	if err != nil {
-		return nil, err
+		return cfg, err
 	}
 
 	return cfg, nil
