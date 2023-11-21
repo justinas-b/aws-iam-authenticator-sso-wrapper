@@ -154,7 +154,11 @@ func updateRoleMappings() {
 	if err != nil {
 		logger.Panic("Error occurred while retrieving SSO Roles for AWS IAM service", zap.Error(err))
 	}
-
+	
+	accountId, err := getAccountId()
+	if err != nil {
+		logger.Panic("Failed to read AWS Account ID", zap.Error(err))
+		
 	// Replace PermissionSet name with Role ARN, if permission set is not found - remove it from configMap
 	roleMappingsUpdated := transformRoleMappings(roleMappings, awsIAMRoles, getAccountId())
 
