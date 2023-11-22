@@ -59,7 +59,8 @@ jobs:
         with:
           name: golangci-lint-test-results
           path: lint-report.xml
-      - uses: dorny/test-reporter@v1.6.0
+      - uses: dorny/test-reporter@v1.7.0
+        if: success() || failure()    # run this step even if previous step failed
         with:
           artifact: golangci-lint-test-results
           name: golangci-lint-test-results
