@@ -1,14 +1,14 @@
 package main
 
 import (
-  "flag"
-  "fmt"
-  "gopkg.in/yaml.v2"
-  "os"
-  "os/signal"
-  "time"
-
-  "go.uber.org/zap"
+	"flag"
+	"fmt"
+	"go.uber.org/zap"
+	"gopkg.in/yaml.v2"
+	"os"
+	"os/signal"
+	"reflect"
+	"time"
 )
 
 var (
@@ -157,6 +157,7 @@ func updateRoleMappings() {
 		logger.Panic("Error occurred while retrieving SSO Roles for AWS IAM service", zap.Error(err))
 	}
 
+	// Get AWS Account ID where this application runs on
 	accountId, err := getAccountId()
 	if err != nil {
 		logger.Panic("Failed to read AWS Account ID", zap.Error(err))
@@ -164,6 +165,10 @@ func updateRoleMappings() {
 
 	// Replace PermissionSet name with Role ARN, if permission set is not found - remove it from configMap
 	roleMappingsUpdated := transformRoleMappings(roleMappings, awsIAMRoles, accountId)
+
+	// Add worker node role bindings if those are absent
+	iamRoleARN := getInstanceRole()
+	roleMappingsUpdated = addWorkerNodeRoleBindings(roleMappingsUpdated, iamRoleARN)
 
 	// Marshal new role mappings into string format and update configMap on destination namespace
 	data, err := yaml.Marshal(roleMappingsUpdated) // Marshal new role mappings into string format
@@ -180,4 +185,27 @@ func updateRoleMappings() {
 	}
 
 	logger.Info("Finished processing configMaps")
+}
+
+func addWorkerNodeRoleBindings(mappings []SSORoleMapping, roleARN string) []SSORoleMapping {
+	binding := SSORoleMapping{
+		RoleARN:  roleARN,
+		Groups:   []string{"system:bootstrappers", "system:nodes"},
+		Username: "system:node:{{EC2PrivateDNSName}}",
+	}
+
+	if !contains(mappings, binding) {
+		mappings = append(mappings, binding)
+	}
+	return mappings
+}
+
+// Checks []SSORoleMapping if it contains specific SSORoleMapping
+func contains(mappings []SSORoleMapping, binding SSORoleMapping) bool {
+	for _, m := range mappings {
+		if reflect.DeepEqual(m, binding) {
+			return true
+		}
+	}
+	return false
 }
