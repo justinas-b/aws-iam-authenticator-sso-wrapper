@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/service/iam/types"
 	"go.uber.org/zap"
@@ -142,7 +143,7 @@ func setConfigMap(clientset kubernetes.Interface, configMapName string, namespac
 // - awsIAMRoles: a slice of types.Role structs
 //
 // It returns a slice of SSORoleMapping structs, where the PermissionSet name is replaced with Role ARN.
-func transformRoleMappings(roleMappings []SSORoleMapping, awsIAMRoles []types.Role) []SSORoleMapping {
+func transformRoleMappings(roleMappings []SSORoleMapping, awsIAMRoles []types.Role, accountId string) []SSORoleMapping {
 	// Replace PermissionSet name with Role ARN, if permission
 	// set is not found - remove it from configMap
 
@@ -155,9 +156,17 @@ func transformRoleMappings(roleMappings []SSORoleMapping, awsIAMRoles []types.Ro
 		// Check if Role Mapping needs translation. If not,
 		// skip this itteration and add object to updated list
 		if (roleMapping.PermissionSet == "") || (roleMapping.RoleARN != "") {
-			logger.Debug("Role Mapping does not need to be translated", zap.Any("roleMapping", roleMapping))
-			roleMappingsUpdated = append(roleMappingsUpdated, roleMapping)
-			continue
+			//Check if rolemapping requires fetching the accountid of the aws account
+			if(strings.Contains(roleMapping.RoleARN, "$ACCOUNTID")) {
+				logger.Info("Replacing $ACCOUNTID with Actual account ID")
+				roleMapping.RoleARN = strings.Replace(roleMapping.RoleARN, "$ACCOUNTID", accountId, -1)
+				roleMappingsUpdated = append(roleMappingsUpdated, roleMapping)
+				continue
+			} else {	
+				logger.Debug("Role Mapping does not need to be translated", zap.Any("roleMapping", roleMapping))
+				roleMappingsUpdated = append(roleMappingsUpdated, roleMapping)
+				continue
+			}
 		}
 
 		// Translate permission set name to ARN

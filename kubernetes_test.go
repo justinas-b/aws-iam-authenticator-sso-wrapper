@@ -228,7 +228,7 @@ func TestTransformRoleMappings(t *testing.T) {
 			},
 		}
 
-		got := transformRoleMappings(mappings, roles)
+		got := transformRoleMappings(mappings, roles, "")
 
 		if !reflect.DeepEqual(got, want) {
 			t.Errorf("TransformRoleMappings() returned unexpected object: %+v, want %+v", got, want)
@@ -275,7 +275,7 @@ func TestTransformRoleMappings(t *testing.T) {
 			},
 		}
 
-		got := transformRoleMappings(mappings, roles)
+		got := transformRoleMappings(mappings, roles, "")
 
 		if !reflect.DeepEqual(got, want) {
 			t.Errorf("TransformRoleMappings() returned unexpected object: %+v, want %+v", got, want)
@@ -327,7 +327,47 @@ func TestTransformRoleMappings(t *testing.T) {
 			},
 		}
 
-		got := transformRoleMappings(mappings, roles)
+		got := transformRoleMappings(mappings, roles, "")
+
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("TransformRoleMappings() returned unexpected object: %+v, want %+v", got, want)
+		}
+	})
+
+	// Test when ACCOUNTID placeholder was provided, if it is correctly translated
+	t.Run("Translate ACCOUNTID placeholder actual account ID", func(t *testing.T) {
+		mappings := []SSORoleMapping{
+			{
+				RoleARN:       "arn:aws:iam::$ACCOUNTID:role/admin-role",
+				PermissionSet: "",
+				Username:      "",
+				Groups:        []string{},
+			},
+		}
+
+		roles := []types.Role{
+			{
+				RoleName: aws.String("AWSReservedSSO_devops_0123456789abcdef"),
+				Path:     aws.String("/aws-reserved/sso.amazonaws.com/eu-west-1/"),
+				Arn:      aws.String("arn:aws:iam::123456789012:role/aws-reserved/sso.amazonaws.com/eu-west-1/AWSReservedSSO_devops_0123456789abcdef"),
+			},
+			{
+				RoleName: aws.String("AWSReservedSSO_sre_0123456789abcdef"),
+				Path:     aws.String("/aws-reserved/sso.amazonaws.com/eu-west-1/"),
+				Arn:      aws.String("arn:aws:iam::123456789012:role/aws-reserved/sso.amazonaws.com/eu-west-1/AWSReservedSSO_sre_0123456789abcdef"),
+			},
+		}
+
+		want := []SSORoleMapping{
+			{
+				RoleARN:       "arn:aws:iam::123456789012:role/admin-role",
+				PermissionSet: "",
+				Username:      "",
+				Groups:        []string{},
+			},
+		}
+
+		got := transformRoleMappings(mappings, roles, "123456789012")
 
 		if !reflect.DeepEqual(got, want) {
 			t.Errorf("TransformRoleMappings() returned unexpected object: %+v, want %+v", got, want)

@@ -1,24 +1,26 @@
 package main
 
 import (
-	"flag"
-	"fmt"
-	"os"
-	"os/signal"
-	"time"
+  "flag"
+  "fmt"
+  "gopkg.in/yaml.v2"
+  "os"
+  "os/signal"
+  "time"
 
-	"go.uber.org/zap"
-	"gopkg.in/yaml.v3"
+  "go.uber.org/zap"
 )
 
-var logger *zap.Logger
-var sourceConfigMapName string
-var sourceNamespaceName string
-var destinationConfigMapName string
-var destinationNamespaceName string
-var defaultAWSRegion string
-var debug bool
-var interval int
+var (
+	logger                   *zap.Logger
+	sourceConfigMapName      string
+	sourceNamespaceName      string
+	destinationConfigMapName string
+	destinationNamespaceName string
+	defaultAWSRegion         string
+	debug                    bool
+	interval                 int
+)
 
 // init is a special function in Go that is automatically called before the main function.
 func init() {
@@ -43,10 +45,10 @@ func main() {
 // No parameters.
 // No return type.
 func parseCliArgs() {
-	// Parce cli arguments
+	// Parse cli arguments
 	flag.StringVar(&sourceConfigMapName, "src-configmap", "aws-auth", "Name of the source Kubernetes ConfigMap to read data from and perform transformation upon")
-	flag.StringVar(&sourceNamespaceName, "src-namespace", "", "Kubernetes namespace from which to read ConfigMap which containes mapRoles with permissionset names. If not defined, current namespace of pod will be used")
-	flag.StringVar(&destinationConfigMapName, "dst-configmap", "aws-auth", "Name of the destination Kubernets ConfigMap which will be updated after transformation")
+	flag.StringVar(&sourceNamespaceName, "src-namespace", "", "Kubernetes namespace from which to read ConfigMap which contains mapRoles with permissionset names. If not defined, current namespace of pod will be used")
+	flag.StringVar(&destinationConfigMapName, "dst-configmap", "aws-auth", "Name of the destination Kubernetes ConfigMap which will be updated after transformation")
 	flag.StringVar(&destinationNamespaceName, "dst-namespace", "kube-system", "Name of the destination Kubernetes Namespace where new ConfigMap will be updated")
 	flag.StringVar(&defaultAWSRegion, "aws-region", "us-east-1", "AWS region to use when interacting with IAM service")
 	flag.BoolVar(&debug, "debug", false, "Enable debug logging")
@@ -110,7 +112,7 @@ func scheduler(f func(), timeInterval time.Duration) chan bool {
 // updateRoleMappings updates the role mappings in the configMap.
 //
 // This function retrieves the current namespace where the pod is running and
-// reads the configMap template from that namespace. It then unmarshals the
+// reads the configMap template from that namespace. It then unmarshal the
 // RoleMappings from the configMap and reads all the SSO roles from AWS IAM.
 // The function replaces the PermissionSet name with the Role ARN and removes
 // the permission set from the configMap if it is not found. It then marshals
@@ -155,8 +157,13 @@ func updateRoleMappings() {
 		logger.Panic("Error occurred while retrieving SSO Roles for AWS IAM service", zap.Error(err))
 	}
 
+	accountId, err := getAccountId()
+	if err != nil {
+		logger.Panic("Failed to read AWS Account ID", zap.Error(err))
+	}
+
 	// Replace PermissionSet name with Role ARN, if permission set is not found - remove it from configMap
-	roleMappingsUpdated := transformRoleMappings(roleMappings, awsIAMRoles)
+	roleMappingsUpdated := transformRoleMappings(roleMappings, awsIAMRoles, accountId)
 
 	// Marshal new role mappings into string format and update configMap on destination namespace
 	data, err := yaml.Marshal(roleMappingsUpdated) // Marshal new role mappings into string format
@@ -164,7 +171,7 @@ func updateRoleMappings() {
 		logger.Panic("Failed to marshal RoleMappings", zap.Error(err))
 	}
 
-	cmdata := configMap.Data // Read Data from existing configMap and replates "mapRoles" with new data
+	cmdata := configMap.Data // Read Data from existing configMap and replaces "mapRoles" with new data
 	cmdata["mapRoles"] = string(data)
 
 	err = setConfigMap(clientset, destinationConfigMapName, destinationNamespaceName, cmdata) // Update configMap

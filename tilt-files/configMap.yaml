@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aws-auth-src
+  namespace: aws-iam-authenticator-sso-wrapper
+data:
+  mapAccounts: |
+    []
+  mapUsers: |
+    []
+  mapRoles: |
+    - "groups":
+      - "system:masters"
+      "rolearn": "arn:aws:iam::$ACCOUNTID:role/admin-role"
+      "username": "admin:{{SessionName}}"
+    - "groups":
+      - "system:masters"
+      "permissionset": "platform-engineering-dev-pu"
+      "username": "platform-engineering:{{SessionName}}"

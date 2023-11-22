@@ -1,0 +1,53 @@
+---
+# Source: aws-iam-authenticator-sso-wrapper/templates/role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: aws-iam-authenticator-sso-wrapper
+  name: aws-auth-configmap-updater-dst
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    #    resourceNames: [ "aws-auth-dst" ]
+    #    verbs: ["update", "get", "create"]
+    verbs: ["*"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: aws-auth-configmap-updater-src
+  namespace: aws-iam-authenticator-sso-wrapper
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    resourceNames: [ "aws-auth-src" ]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: aws-auth-configmap-updater-dst
+  namespace: aws-iam-authenticator-sso-wrapper
+subjects:
+  - kind: ServiceAccount
+    name: aws-iam-authenticator-sso-wrapper
+    namespace: aws-iam-authenticator-sso-wrapper
+roleRef:
+  kind: Role
+  name: aws-auth-configmap-updater-dst
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: aws-auth-configmap-updater-src
+  namespace: aws-iam-authenticator-sso-wrapper
+subjects:
+  - kind: ServiceAccount
+    name: aws-iam-authenticator-sso-wrapper
+    namespace: aws-iam-authenticator-sso-wrapper
+roleRef:
+  kind: Role
+  name: aws-auth-configmap-updater-src
+  apiGroup: rbac.authorization.k8s.io
+---

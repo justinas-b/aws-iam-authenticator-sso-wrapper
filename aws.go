@@ -8,26 +8,24 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
+	"github.com/aws/aws-sdk-go-v2/service/sts"
 	"github.com/aws/aws-sdk-go-v2/service/iam/types"
 	"go.uber.org/zap"
 	"golang.org/x/exp/slices"
 )
 
-// getAWSClient returns an Amazon IAM service client.
+// getAWSClientConfig returns an aws.Config to be used on clients.
 //
-// It initializes the AWS SDK and creates an Amazon IAM service client using the default configuration.
-// It takes no parameters and returns a pointer to an iam.Client and an error.
-func getAWSClient() (*iam.Client, error) {
+// It initializes the AWS SDK and creates an Amazon client configuration.
+// It takes no parameters and returns a aws.Config and an error.
+func getAWSClientConfig() (aws.Config, error) {
 	// Initialize AWS SDK
 	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(defaultAWSRegion))
 	if err != nil {
-		return nil, err
+		return cfg, err
 	}
 
-	// Create an Amazon IAM service client
-	client := iam.NewFromConfig(cfg)
-
-	return client, nil
+	return cfg, nil
 }
 
 // listSSORoles retrieves a list of IAM roles that are used by AWS SSO service.
@@ -41,11 +39,12 @@ func listSSORoles() ([]types.Role, error) {
 
 	logger.Info("Retrieving SSO roles from AWS IAM...")
 
-	client, err := getAWSClient()
+	cfg, err := getAWSClientConfig()
 	if err != nil {
 		logger.Fatal("Unable to load SDK config, %v", zap.Error(err))
 	}
-
+	client := iam.NewFromConfig(cfg)
+	
 	// Create a list roles request
 	params := &iam.ListRolesInput{
 		MaxItems:   aws.Int32(10),
@@ -117,4 +116,29 @@ func removePathFromRoleARN(arn string, path string) string {
 	}
 
 	return r.ReplaceAllString(arn, "/")
+}
+
+// Get AWS account ID
+func getAccountId() (string, error) {
+        logger.Debug("Reading AWS Account ID...")
+        
+	cfg, err := getAWSClientConfig()
+	if err != nil {
+		logger.Fatal("Unable to load SDK config, %v", zap.Error(err))
+	}
+	
+	client := sts.NewFromConfig(cfg)
+	if err != nil {
+		logger.Fatal("Unable to load SDK config, %v", zap.Error(err))
+	}
+	input := &sts.GetCallerIdentityInput{}
+
+	req, err := client.GetCallerIdentity(context.TODO(), input)
+	if err != nil {
+		return "", err
+	}
+
+        logger.Debug(fmt.Sprintf("Retrievied %s as AWS Account ID", *req.Account))
+	
+	return *req.Account, nil
 }
