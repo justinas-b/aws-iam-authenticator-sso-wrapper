@@ -61,7 +61,8 @@ jobs:
           path: lint-report.xml
       - run: ls
         if: success() || failure()    # run this step even if previous step failed
-      - uses: dorny/test-reporter@v1.7.0
+      - name: Test report
+        uses: dorny/test-reporter@v1.7.0
         if: success() || failure()    # run this step even if previous step failed
         with:
           path: 'lint-report.xml'
