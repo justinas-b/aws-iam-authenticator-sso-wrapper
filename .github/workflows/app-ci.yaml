@@ -65,6 +65,7 @@ jobs:
         uses: dorny/test-reporter@v1.7.0
         if: success() || failure()    # run this step even if previous step failed
         with:
+          name: golangci-lint
           path: 'lint-report.xml'
           reporter: java-junit
           fail-on-error: 'false'
