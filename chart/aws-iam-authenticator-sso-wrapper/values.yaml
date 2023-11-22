@@ -9,7 +9,7 @@ deployment:
   #   - name: myImagePullSecret
   image:
     repository: justinasb/aws-iam-authenticator-sso-wrapper
-    tag: v0.0.13
+    tag: v0.0.15
     pullPolicy: IfNotPresent
   resources:
     limits:
