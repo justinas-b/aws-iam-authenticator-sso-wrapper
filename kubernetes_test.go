@@ -228,7 +228,7 @@ func TestTransformRoleMappings(t *testing.T) {
 			},
 		}
 
-		got := transformRoleMappings(mappings, roles)
+		got := transformRoleMappings(mappings, roles, "")
 
 		if !reflect.DeepEqual(got, want) {
 			t.Errorf("TransformRoleMappings() returned unexpected object: %+v, want %+v", got, want)
@@ -275,7 +275,7 @@ func TestTransformRoleMappings(t *testing.T) {
 			},
 		}
 
-		got := transformRoleMappings(mappings, roles)
+		got := transformRoleMappings(mappings, roles, "")
 
 		if !reflect.DeepEqual(got, want) {
 			t.Errorf("TransformRoleMappings() returned unexpected object: %+v, want %+v", got, want)
@@ -327,7 +327,7 @@ func TestTransformRoleMappings(t *testing.T) {
 			},
 		}
 
-		got := transformRoleMappings(mappings, roles)
+		got := transformRoleMappings(mappings, roles, "")
 
 		if !reflect.DeepEqual(got, want) {
 			t.Errorf("TransformRoleMappings() returned unexpected object: %+v, want %+v", got, want)
