@@ -21,3 +21,9 @@
 go.work
 
 dist/
+build/
+.idea/
+.env
+k8s/
+.editorconfig
+TODO
