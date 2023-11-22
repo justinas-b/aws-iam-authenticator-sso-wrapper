@@ -61,17 +61,9 @@ jobs:
           path: lint-report.xml
       - run: ls
         if: success() || failure()    # run this step even if previous step failed
-#        with:
-#          artifact: golangci-lint-test-results
-#          name: golangci-lint-test-results
-#          path: 'lint-report.xml'
-#          reporter: java-junit
-#          fail-on-error: 'false'
       - uses: dorny/test-reporter@v1.7.0
         if: success() || failure()    # run this step even if previous step failed
         with:
-          artifact: golangci-lint-test-results
-          name: golangci-lint-test-results
           path: 'lint-report.xml'
           reporter: java-junit
           fail-on-error: 'false'
