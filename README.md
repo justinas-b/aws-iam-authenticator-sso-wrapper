@@ -96,6 +96,16 @@ data:
     []
 ```
 
+To make sure EKS cluster may continue to function, if below map is not provided explicitly for kubernetes worker nodes,
+tool will read the ARN of IAM Role which is used by worker nodes from Instance Metadata Service (IMDS) and will inject
+it automatically:
+```yaml
+- groups:
+  - system:bootstrappers
+  - system:nodes
+  rolearn: arn:aws:iam::111122223333:role/my-node-role
+  username: system:node:{{EC2PrivateDNSName}}
+```
 
 The tool will process `aws-auth` ConfigMap from it's local kubernetes namespace and transform it to the format AWS EKS cluster expects. After processing ConfigMap, it's output is saved `kube-system` namespace where PermissionSet's name is translated to corresponding role ARN, meaning `"permissionset": AdminRole"` line will become `"rolearn": "arn:aws:iam::000000000000:role/AWSReservedSSO_AdminRole_0123456789abcdef"`
 

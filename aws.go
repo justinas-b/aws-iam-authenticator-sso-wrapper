@@ -3,13 +3,15 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
 	"regexp"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/feature/ec2/imds"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
-	"github.com/aws/aws-sdk-go-v2/service/sts"
 	"github.com/aws/aws-sdk-go-v2/service/iam/types"
+	"github.com/aws/aws-sdk-go-v2/service/sts"
 	"go.uber.org/zap"
 	"golang.org/x/exp/slices"
 )
@@ -44,7 +46,7 @@ func listSSORoles() ([]types.Role, error) {
 		logger.Fatal("Unable to load SDK config, %v", zap.Error(err))
 	}
 	client := iam.NewFromConfig(cfg)
-	
+
 	// Create a list roles request
 	params := &iam.ListRolesInput{
 		MaxItems:   aws.Int32(10),
@@ -65,7 +67,7 @@ func listSSORoles() ([]types.Role, error) {
 		logger.Debug(fmt.Sprintf("Paginating through IAM Roles (page %d)...", (pageNum + 1)))
 		output, err := paginator.NextPage(context.TODO())
 		if err != nil {
-			logger.Error("Error ocured while paginating through roles", zap.Error(err))
+			logger.Error("Error occurred while paginating through roles", zap.Error(err))
 			return roles, err
 		}
 		roles = append(roles, output.Roles...)
@@ -120,13 +122,13 @@ func removePathFromRoleARN(arn string, path string) string {
 
 // Get AWS account ID
 func getAccountId() (string, error) {
-        logger.Debug("Reading AWS Account ID...")
-        
+	logger.Debug("Reading AWS Account ID...")
+
 	cfg, err := getAWSClientConfig()
 	if err != nil {
 		logger.Fatal("Unable to load SDK config, %v", zap.Error(err))
 	}
-	
+
 	client := sts.NewFromConfig(cfg)
 	if err != nil {
 		logger.Fatal("Unable to load SDK config, %v", zap.Error(err))
@@ -138,7 +140,27 @@ func getAccountId() (string, error) {
 		return "", err
 	}
 
-        logger.Debug(fmt.Sprintf("Retrievied %s as AWS Account ID", *req.Account))
-	
+	logger.Debug(fmt.Sprintf("Retrievied %s as AWS Account ID", *req.Account))
+
 	return *req.Account, nil
+}
+
+func getInstanceRole() string {
+	cfg, err := getAWSClientConfig()
+	if err != nil {
+		logger.Fatal("Unable to load SDK config, %v", zap.Error(err))
+	}
+
+	client := imds.NewFromConfig(cfg)
+	response, err := client.GetMetadata(context.TODO(), &imds.GetMetadataInput{Path: "iam/security-credentials"})
+	if err != nil {
+		logger.Fatal("Unable to retrieve the private IP address from the EC2 instance: %v", zap.Error(err))
+	}
+
+	role, err := io.ReadAll(response.Content)
+	if err != nil {
+		logger.Fatal("Unable to read role name from response: %v", zap.Error(err))
+	}
+
+	return string(role)
 }

@@ -17,3 +17,4 @@ data:
       - "system:masters"
       "permissionset": "platform-engineering-dev-pu"
       "username": "platform-engineering:{{SessionName}}"
+    
