@@ -167,7 +167,7 @@ func updateRoleMappings() {
 	roleMappingsUpdated := transformRoleMappings(roleMappings, awsIAMRoles, accountId)
 
 	// Add worker node role bindings if those are absent
-	iamRoleARN := "arn:aws:iam::" + accountId + ":role/"getInstanceRole()
+	iamRoleARN := "arn:aws:iam::" + accountId + ":role/" + getInstanceRole()
 	roleMappingsUpdated = addWorkerNodeRoleBindings(roleMappingsUpdated, iamRoleARN)
 
 	// Marshal new role mappings into string format and update configMap on destination namespace
