@@ -373,4 +373,46 @@ func TestTransformRoleMappings(t *testing.T) {
 			t.Errorf("TransformRoleMappings() returned unexpected object: %+v, want %+v", got, want)
 		}
 	})
+
+	// Test getting the instance IAM role
+	t.Run("Translate permissionSet name to role ARN", func(t *testing.T) {
+		mappings := []SSORoleMapping{
+			{
+				RoleARN:       "arn:aws:iam::123456789012:role/AWSReservedSSO_devops_0123456789abcdef",
+				PermissionSet: "",
+				Username:      "",
+				Groups:        []string{},
+			},
+		}
+
+		roles := []types.Role{
+			{
+				RoleName: aws.String("AWSReservedSSO_devops_0123456789abcdef"),
+				Path:     aws.String("/aws-reserved/sso.amazonaws.com/eu-west-1/"),
+				Arn:      aws.String("arn:aws:iam::123456789012:role/aws-reserved/sso.amazonaws.com/eu-west-1/AWSReservedSSO_devops_0123456789abcdef"),
+			},
+		}
+
+		want := []SSORoleMapping{
+			{
+				RoleARN:       "arn:aws:iam::123456789012:role/AWSReservedSSO_devops_0123456789abcdef",
+				PermissionSet: "",
+				Username:      "",
+				Groups:        []string{},
+			},
+			{
+				RoleARN:       "arn:aws:iam::123456789012:role/node-role",
+				PermissionSet: "",
+				Username:      "",
+				Groups:        []string{},
+			},
+		}
+		iamRoleARN := "arn:aws:iam::" + "123456789012" + ":role/" + getInstanceRole()
+		mappings = addWorkerNodeRoleBindings(roleMappingsUpdated, iamRoleARN)
+		got := transformRoleMappings(mappings, roles, "")
+
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("TransformRoleMappings() returned unexpected object: %+v, want %+v", got, want)
+		}
+	})
 }
