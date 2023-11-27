@@ -407,7 +407,7 @@ func TestTransformRoleMappings(t *testing.T) {
 				Groups:        []string{},
 			},
 		}
-		iamRoleARN := "arn:aws:iam::" + "123456789012" + ":role/" + getInstanceRole()
+		iamRoleARN := "arn:aws:iam::" + "123456789012" + ":role/" + "node-role"
 		mappings = addWorkerNodeRoleBindings(mappings, iamRoleARN)
 		got := transformRoleMappings(mappings, roles, "")
 
