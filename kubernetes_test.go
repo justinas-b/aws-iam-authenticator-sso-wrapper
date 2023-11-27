@@ -408,7 +408,7 @@ func TestTransformRoleMappings(t *testing.T) {
 			},
 		}
 		iamRoleARN := "arn:aws:iam::" + "123456789012" + ":role/" + "node-role"
-		mappings = addWorkerNodeRoleBindings(mappings, iamRoleARN)
+		addWorkerNodeRoleBindings(mappings, iamRoleARN)
 		got := transformRoleMappings(mappings, roles, "")
 
 		if !reflect.DeepEqual(got, want) {
