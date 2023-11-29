@@ -6,7 +6,7 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.23.2
 	github.com/aws/aws-sdk-go-v2/config v1.25.5
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.14.5
-	github.com/aws/aws-sdk-go-v2/service/iam v1.27.3
+	github.com/aws/aws-sdk-go-v2/service/iam v1.27.5
 	github.com/aws/aws-sdk-go-v2/service/sts v1.25.6
 	go.uber.org/zap v1.26.0
 	golang.org/x/exp v0.0.0-20231110203233-9a3e6036ecaa
