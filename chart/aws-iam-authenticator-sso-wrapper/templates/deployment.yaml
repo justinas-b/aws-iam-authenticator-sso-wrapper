@@ -37,6 +37,10 @@ spec:
       {{- if .Values.deployment.imagePullSecrets }}
       imagePullSecrets: {{- toYaml .Values.deployment.imagePullSecrets | nindent 8 }}
       {{- end }}
+      initContainers:
+      {{- if .Values.extraInitContainers }}
+      {{ toYaml .Values.extraInitContainers | indent 2 }}
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.deployment.image.repository }}:{{ .Values.deployment.image.tag }}"
