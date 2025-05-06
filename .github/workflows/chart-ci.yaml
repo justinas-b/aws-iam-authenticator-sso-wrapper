@@ -47,4 +47,4 @@ jobs:
           node_image: kindest/node:${{ matrix.k8s }}
       - name: Run chart-testing (install)
         if: steps.list-changed.outputs.changed == 'true'
-        run: ct install --target-branch ${{ github.event.repository.default_branch }} --chart-dirs chart --helm-extra-args "--values ci-values.yaml"
+        run: ct install --target-branch ${{ github.event.repository.default_branch }} --chart-dirs chart
