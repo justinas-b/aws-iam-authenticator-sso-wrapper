@@ -1,6 +1,7 @@
 ---
 deployment:
   replicas: 1
+  extraInitContainers: []
   podLabels:
     environment: "test"
   podAnnotations:
@@ -9,7 +10,7 @@ deployment:
   #   - name: myImagePullSecret
   image:
     repository: justinasb/aws-iam-authenticator-sso-wrapper
-    tag: v0.0.17
+    tag: v0.1.0
     pullPolicy: IfNotPresent
   resources:
     limits:
