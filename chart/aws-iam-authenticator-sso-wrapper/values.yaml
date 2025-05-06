@@ -1,6 +1,7 @@
 ---
 deployment:
   replicas: 1
+  extraInitContainers: []
   podLabels:
     environment: "test"
   podAnnotations:
