@@ -1,4 +1,4 @@
-FROM golang:1.21-alpine
+FROM golang:1.24-alpine
 RUN apk update && apk upgrade
 
 RUN mkdir -p /app
