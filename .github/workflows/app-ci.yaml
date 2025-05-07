@@ -40,7 +40,7 @@ jobs:
           args: --timeout=30m --out-format=junit-xml:lint-report.xml,github-actions
           
           # Optional: show only new issues if it's a pull request. The default value is `false`.
-          only-new-issues: true
+          # only-new-issues: false
 
           # Optional: if set to true, then all caching functionality will be completely disabled,
           #           takes precedence over all other caching options.
