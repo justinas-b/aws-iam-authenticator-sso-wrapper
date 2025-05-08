@@ -21,8 +21,17 @@ jobs:
       - uses: actions/setup-go@v4
         with:
           go-version: stable
+      - name: Check for Go files
+        id: files
+        run: |  
+          if find . -name '*.go' | grep .; then
+            echo "go_files_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "go_files_exists=false" >> $GITHUB_OUTPUT
+          fi
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
+        if: ${{ steps.files.outputs.go_files_exists == 'true' }}
         with:
           # Require: The version of golangci-lint to use.
           # When `install-mode` is `binary` (default) the value can be v1.2 or v1.2.3 or `latest` to use the latest version.
@@ -75,6 +84,8 @@ jobs:
       - uses: actions/setup-go@v4
         with:
           go-version: stable
+      - name: Tidy modules
+        run: go mod tidy
       - name: Run Tests
         run: |
           go test -race -v -coverprofile=coverage.txt -covermode=atomic ./...
