@@ -159,7 +159,7 @@ func transformRoleMappings(roleMappings []SSORoleMapping, awsIAMRoles []types.Ro
 			//Check if rolemapping requires fetching the accountid of the aws account
 			if(strings.Contains(roleMapping.RoleARN, "$ACCOUNTID")) {
 				logger.Info("Replacing $ACCOUNTID with Actual account ID")
-				roleMapping.RoleARN = strings.Replace(roleMapping.RoleARN, "$ACCOUNTID", accountId, -1)
+				roleMapping.RoleARN = strings.ReplaceAll(roleMapping.RoleARN, "$ACCOUNTID", accountId)
 				roleMappingsUpdated = append(roleMappingsUpdated, roleMapping)
 				continue
 			} else {	

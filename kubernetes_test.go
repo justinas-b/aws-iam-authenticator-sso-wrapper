@@ -107,7 +107,7 @@ func TestSetConfigMap(t *testing.T) {
 	// Test when namespace does exist
 	t.Run("ConfigMap and Namespace does not exist", func(t *testing.T) {
 
-		var fakeClientSet *fake.Clientset = fake.NewSimpleClientset()
+		var fakeClientSet = fake.NewSimpleClientset()
 
 		cmdata := map[string]string{
 			"mapAccounts": "[]\n",
