@@ -52,7 +52,7 @@ jobs:
       - name: Run Tests
         run: |
           go test -race -v -coverprofile=coverage.txt -covermode=atomic ./...
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true
           verbose: true
