@@ -36,7 +36,7 @@ func getAWSClientConfig() (aws.Config, error) {
 // It returns a slice of types.Role and an error.
 func listSSORoles() ([]types.Role, error) {
 
-	var pathPrefix string = "/aws-reserved/sso.amazonaws.com/"
+	var pathPrefix = "/aws-reserved/sso.amazonaws.com/"
 	var pageSize int32 = 10
 
 	logger.Info("Retrieving SSO roles from AWS IAM...")
