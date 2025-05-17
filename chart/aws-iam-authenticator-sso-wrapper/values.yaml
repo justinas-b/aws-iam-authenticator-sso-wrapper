@@ -25,6 +25,7 @@ deployment:
     debug: true
     interval: 1800
     srcConfigmap: aws-auth
+    disableAutoWorkerNodeRole: false
 serviceaccount:
   create: true
   name: aws-iam-authenticator-sso-wrapper

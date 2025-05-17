@@ -63,6 +63,9 @@ spec:
             {{- if .Values.deployment.applicationArguments.interval }}
             - "-interval={{ toYaml .Values.deployment.applicationArguments.interval }}"
             {{- end }}
+            {{- if .Values.deployment.applicationArguments.disableAutoWorkerNodeRole }}
+            - "--disable-auto-worker-node-role"
+            {{- end }}
             {{- if .Values.deployment.applicationArguments.debug }}
             - "-debug"
             {{- end }}
