@@ -12,15 +12,15 @@ import (
 )
 
 var (
-	logger                   *zap.Logger
-	sourceConfigMapName      string
-	sourceNamespaceName      string
-	destinationConfigMapName string
-	destinationNamespaceName string
-	defaultAWSRegion         string
-	debug                    bool
-	interval                 int
-)
+	logger                    *zap.Logger
+	sourceConfigMapName       string
+	sourceNamespaceName       string
+	destinationConfigMapName  string
+	destinationNamespaceName  string
+	defaultAWSRegion          string
+	debug                     bool
+	interval                  int
+	disableAutoWorkerNodeRole bool
 
 // init is a special function in Go that is automatically called before the main function.
 func init() {
@@ -53,6 +53,7 @@ func parseCliArgs() {
 	flag.StringVar(&defaultAWSRegion, "aws-region", "us-east-1", "AWS region to use when interacting with IAM service")
 	flag.BoolVar(&debug, "debug", false, "Enable debug logging")
 	flag.IntVar(&interval, "interval", 1800, "Interval in seconds on which application will check for updates")
+	flag.BoolVar(&disableAutoWorkerNodeRole, "disable-auto-worker-node-role", false, "Disable automatic injection of worker node IAM role")
 	flag.Parse() // Enable command-line parsing
 }
 
@@ -166,10 +167,12 @@ func updateRoleMappings() {
 	// Replace PermissionSet name with Role ARN, if permission set is not found - remove it from configMap
 	roleMappingsUpdated := transformRoleMappings(roleMappings, awsIAMRoles, accountId)
 
-	// Add worker node role bindings if those are absent
-	iamRoleARN := "arn:aws:iam::" + accountId + ":role/" + getInstanceRole()
-	roleMappingsUpdated = addWorkerNodeRoleBindings(roleMappingsUpdated, iamRoleARN)
-
+	// Add worker node role bindings if those are absent and not disabled via CLI flag
+	if !disableAutoWorkerNodeRole {
+		iamRoleARN := "arn:aws:iam::" + accountId + ":role/" + getInstanceRole()
+		roleMappingsUpdated = addWorkerNodeRoleBindings(roleMappingsUpdated, iamRoleARN)
+	} 
+	
 	// Marshal new role mappings into string format and update configMap on destination namespace
 	data, err := yaml.Marshal(roleMappingsUpdated) // Marshal new role mappings into string format
 	if err != nil {
