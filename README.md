@@ -106,6 +106,7 @@ it automatically:
   rolearn: arn:aws:iam::111122223333:role/my-node-role
   username: system:node:{{EC2PrivateDNSName}}
 ```
+This automatic worker node role injection can be disabled using the `--disable-auto-worker-node-role` flag
 
 The tool will process `aws-auth` ConfigMap from it's local kubernetes namespace and transform it to the format AWS EKS cluster expects. After processing ConfigMap, it's output is saved `kube-system` namespace where PermissionSet's name is translated to corresponding role ARN, meaning `"permissionset": AdminRole"` line will become `"rolearn": "arn:aws:iam::000000000000:role/AWSReservedSSO_AdminRole_0123456789abcdef"`
 
@@ -126,6 +127,8 @@ Usage of aws-iam-authenticator-sso-wrapper:
         AWS region to use when interacting with IAM service (default "us-east-1")
   -debug
         Enable debug logging
+  -disable-auto-worker-node-role
+        Disable automatic injection of worker node IAM role
   -dst-configmap string
         Name of the destination Kubernets ConfigMap which will be updated after transformation (default "aws-auth")
   -dst-namespace string
