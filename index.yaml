@@ -2,6 +2,19 @@ apiVersion: v1
 entries:
   aws-iam-authenticator-sso-wrapper:
   - apiVersion: v2
+    appVersion: v0.2.0
+    created: "2025-05-19T06:23:10.024726442Z"
+    description: aws-iam-authenticator-sso-wrapper Chart
+    digest: a5b5964dc70a7063dced2831f5354fc9e39e7fcf73edb1550b0bbc39fdb66360
+    home: https://github.com/justinas-b/aws-iam-authenticator-sso-wrapper
+    maintainers:
+    - email: 12399634+justinas-b@users.noreply.github.com
+      name: justinas-b
+    name: aws-iam-authenticator-sso-wrapper
+    urls:
+    - https://github.com/justinas-b/aws-iam-authenticator-sso-wrapper/releases/download/chart-v0.2.0/aws-iam-authenticator-sso-wrapper-v0.2.0.tgz
+    version: v0.2.0
+  - apiVersion: v2
     appVersion: v0.1.0
     created: "2025-05-06T21:35:44.52797808Z"
     description: aws-iam-authenticator-sso-wrapper Chart
@@ -118,4 +131,4 @@ entries:
     urls:
     - https://github.com/justinas-b/aws-iam-authenticator-sso-wrapper/releases/download/chart-aws-iam-authenticator-sso-wrapper-v0.0.13/aws-iam-authenticator-sso-wrapper-v0.0.13.tgz
     version: v0.0.13
-generated: "2025-05-06T21:35:44.528048531Z"
+generated: "2025-05-19T06:23:10.02477963Z"
