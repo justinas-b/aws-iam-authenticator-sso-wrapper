@@ -3,12 +3,13 @@ package main
 import (
 	"flag"
 	"fmt"
-	"go.uber.org/zap"
-	"gopkg.in/yaml.v2"
 	"os"
 	"os/signal"
 	"reflect"
 	"time"
+
+	"go.uber.org/zap"
+	"gopkg.in/yaml.v2"
 )
 
 var (
@@ -21,6 +22,7 @@ var (
 	debug                     bool
 	interval                  int
 	disableAutoWorkerNodeRole bool
+)
 
 // init is a special function in Go that is automatically called before the main function.
 func init() {
